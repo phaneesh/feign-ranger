@@ -28,6 +28,7 @@ import org.apache.curator.framework.CuratorFramework;
 /**
  * @author phaneesh
  */
+@SuppressWarnings("unchecked")
 public class RangerFeign {
 
     public static Builder builder() {
