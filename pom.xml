@@ -4,7 +4,7 @@
 
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
 
     <name>feign-ranger</name>
@@ -61,7 +61,7 @@
         <curator.version>2.9.1</curator.version>
         <jackson.version>2.6.3</jackson.version>
         <junit.version>4.12</junit.version>
-        <wiremock.version>1.57</wiremock.version>
+        <wiremock.version>1.58</wiremock.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -78,6 +78,11 @@
             <artifactId>hystrix-core</artifactId>
             <version>${hystrix.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hystrix</groupId>
+            <artifactId>hystrix-configurator</artifactId>
+            <version>${hystrix-configurator.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netflix.feign</groupId>
@@ -151,7 +156,7 @@
             <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+     </dependencies>
 
     <build>
         <plugins>

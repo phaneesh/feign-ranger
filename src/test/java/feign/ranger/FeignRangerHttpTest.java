@@ -23,6 +23,11 @@ import com.flipkart.ranger.healthcheck.HealthcheckStatus;
 import com.flipkart.ranger.serviceprovider.ServiceProvider;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.Lists;
+import com.hystrix.configurator.config.HystrixCommandConfig;
+import com.hystrix.configurator.config.HystrixConfig;
+import com.hystrix.configurator.config.HystrixDefaultConfig;
+import com.hystrix.configurator.config.ThreadPoolConfig;
+import com.hystrix.configurator.core.HystrixConfigutationFactory;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.HystrixCommand;
 import feign.FeignException;
@@ -130,6 +135,12 @@ public class FeignRangerHttpTest {
                                 .build()
                         ))
                         .withHeader("Content-Type", "application/json")));
+        HystrixConfigutationFactory.init(
+                HystrixConfig.builder()
+                        .defaultConfig(HystrixDefaultConfig.builder().build())
+                        .command(HystrixCommandConfig.builder().name("test.test").build())
+                        .build());
+
         TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
@@ -147,6 +158,11 @@ public class FeignRangerHttpTest {
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
                 .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
+        HystrixConfigutationFactory.init(
+                HystrixConfig.builder()
+                        .defaultConfig(HystrixDefaultConfig.builder().build())
+                        .command(HystrixCommandConfig.builder().name("test.test").build())
+                        .build());
         try {
             api.test().queue().get();
             fail("Should have failed!");
@@ -160,13 +176,21 @@ public class FeignRangerHttpTest {
     public void testTimeoutHttpCall() throws Exception {
         stubFor(get(urlEqualTo("/v1/test"))
                 .willReturn(aResponse()
-                        .withStatus(500)));
+                        .withStatus(500)
+                        .withFixedDelay(2000))
+                );
         TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
                 .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
-        ConfigurationManager.getConfigInstance().setProperty(
-                "hystrix.command.test.execution.isolation.thread.timeoutInMilliseconds", 1);
+        HystrixConfigutationFactory.init(
+                HystrixConfig.builder()
+                        .defaultConfig(HystrixDefaultConfig.builder().build())
+                        .command(HystrixCommandConfig.builder().name("test.test")
+                                .threadPool(
+                                        ThreadPoolConfig.builder().concurrency(1).timeout(1).build()
+                                )
+                        .build()).build());
         try {
             api.test().queue().get();
             fail("Should have failed!");

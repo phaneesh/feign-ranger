@@ -35,7 +35,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -55,6 +55,23 @@ interface TestApi {
     HystrixCommand<TestResponse> test();
 }
 
+CuratorFramework curator = CuratorFrameworkFactory.builder()
+                .connectString(testingCluster.getConnectString())
+                .namespace("test")
+                .retryPolicy(new RetryForever(3000))
+                .build();
+
+ObjectMapper objectMapper = new ObjectMapper();
+                
+HystrixConfigutationFactory.init(
+                HystrixConfig.builder()
+                        .defaultConfig(HystrixDefaultConfig.builder().build())
+                        .command(HystrixCommandConfig.builder().name("test.test")
+                                .threadPool(
+                                        ThreadPoolConfig.builder().concurrency(1).timeout(1).build()
+                                )
+                        .build()).build());
+                        
 TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())

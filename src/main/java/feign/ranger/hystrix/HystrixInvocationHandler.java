@@ -16,12 +16,12 @@
 
 package feign.ranger.hystrix;
 
+import com.hystrix.configurator.core.BaseCommand;
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
 import feign.InvocationHandlerFactory;
 import feign.Target;
 import feign.ranger.RangerTarget;
+import lombok.ToString;
 import rx.Observable;
 import rx.Single;
 
@@ -35,6 +35,7 @@ import static feign.Util.checkNotNull;
 /**
  * @author phaneesh
  */
+@ToString
 public class HystrixInvocationHandler<T> implements InvocationHandler {
 
     private final RangerTarget<T> target;
@@ -50,13 +51,7 @@ public class HystrixInvocationHandler<T> implements InvocationHandler {
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args)
             throws Throwable {
-        String groupKey = target.getService();
-        String commandKey = method.getName();
-        HystrixCommand.Setter setter = HystrixCommand.Setter
-                .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
-                .andCommandKey(HystrixCommandKey.Factory.asKey(commandKey));
-
-        HystrixCommand<Object> hystrixCommand = new HystrixCommand<Object>(setter) {
+        BaseCommand<Object> hystrixCommand = new BaseCommand<Object>(String.format("%s.%s", target.getService(), method.getName())) {
             @Override
             protected Object run() throws Exception {
                 try {
