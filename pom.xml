@@ -18,6 +18,14 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars repository</name>
+            <url>https://clojars.org/repo</url>
+        </repository>
+    </repositories>
+
     <scm>
         <connection>scm:git:https://github.com/phaneesh/feign-ranger.git</connection>
         <developerConnection>scm:git:https://github.com/phaneesh/feign-ranger.git</developerConnection>
@@ -140,7 +148,7 @@
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
-            <version>1.57</version>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -184,7 +192,7 @@
                     <instrumentation>
                         <ignoreTrivial>true</ignoreTrivial>
                         <excludes>
-                            <exclude>io/feign/ranger/model/**/*.class</exclude>
+                            <exclude>feign/ranger/common/**/*.class</exclude>
                         </excludes>
                     </instrumentation>
                     <check>
