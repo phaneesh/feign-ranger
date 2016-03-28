@@ -4,7 +4,7 @@
 
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
 
     <name>feign-ranger</name>
@@ -54,7 +54,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hystrix.version>1.4.21</hystrix.version>
         <feign.version>8.15.1</feign.version>
-        <hystrix-configurator.version>0.0.2</hystrix-configurator.version>
+        <hystrix-configurator.version>0.0.3</hystrix-configurator.version>
         <lombok.version>1.16.6</lombok.version>
         <lombok.maven.version>1.16.6.1</lombok.maven.version>
         <ranger.version>0.2.1</ranger.version>
