@@ -144,7 +144,7 @@ public class FeignRangerHttpTest {
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
                 .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
-        val result = api.test().queue().get();
+        val result = api.test();
         assertTrue(result.message.equalsIgnoreCase("test"));
     }
 
@@ -163,7 +163,7 @@ public class FeignRangerHttpTest {
                         .command(HystrixCommandConfig.builder().name("test.test").build())
                         .build());
         try {
-            api.test().queue().get();
+            api.test();
             fail("Should have failed!");
         } catch (Exception e) {
             assertTrue(ExceptionUtils.getRootCause(e) instanceof FeignException);
@@ -191,7 +191,7 @@ public class FeignRangerHttpTest {
                                 )
                         .build()).build());
         try {
-            api.test().queue().get();
+            api.test();
             fail("Should have failed!");
         } catch (Exception e) {
             assertTrue(ExceptionUtils.getRootCause(e) instanceof TimeoutException);
@@ -211,6 +211,6 @@ public class FeignRangerHttpTest {
     interface TestApi {
 
         @RequestLine("GET /v1/test")
-        HystrixCommand<TestResponse> test();
+        TestResponse test();
     }
 }

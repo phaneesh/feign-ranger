@@ -60,9 +60,9 @@ public class RangerTarget<T> implements Target<T> {
                 .serviceName(service)
                 .objectMapper(objectMapper)
                 .build();
-        log.debug("Starting service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
+        log.info("Starting service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
         client.start();
-        log.debug("Started service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
+        log.info("Started service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
     }
 
     @Override

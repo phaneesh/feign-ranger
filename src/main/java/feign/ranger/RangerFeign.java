@@ -43,7 +43,7 @@ public class RangerFeign {
                             final CuratorFramework curator, final boolean secured, final ObjectMapper objectMapper) throws Exception {
             super.invocationHandlerFactory((t, dispatch) -> new HystrixInvocationHandler((RangerTarget)t, dispatch, null));
             super.contract(new HystrixDelegatingContract(contract));
-            return target(new RangerTarget<T>(apiType, environment, namespace, service, curator, secured, objectMapper));
+            return target(new RangerTarget<>(apiType, environment, namespace, service, curator, secured, objectMapper));
         }
 
         public <T> T target(Target<T> target, final T fallback) {
