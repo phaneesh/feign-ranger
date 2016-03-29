@@ -17,6 +17,7 @@
 package feign.ranger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Target;
@@ -34,6 +35,8 @@ public class RangerTarget<T> implements Target<T> {
 
     private final Class<T> type;
 
+    private final String namespace;
+
     private final String name;
 
     @Getter
@@ -43,12 +46,13 @@ public class RangerTarget<T> implements Target<T> {
 
     private final boolean secured;
 
-    public RangerTarget(final Class<T> type, final String name, final String environment, final String namespace, final String service,
+    public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
                         final CuratorFramework curator, final boolean secured, final ObjectMapper objectMapper) throws Exception {
         this.type = type;
-        this.name = name;
+        this.namespace = namespace;
         this.secured = secured;
         this.service = service;
+        this.name = Joiner.on('.').join(namespace, service);
         client = ServiceDiscoveryClient.builder()
                 .curator(curator)
                 .environment(environment)

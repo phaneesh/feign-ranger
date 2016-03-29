@@ -28,7 +28,6 @@ import com.hystrix.configurator.config.HystrixConfig;
 import com.hystrix.configurator.config.HystrixDefaultConfig;
 import com.hystrix.configurator.config.ThreadPoolConfig;
 import com.hystrix.configurator.core.HystrixConfigutationFactory;
-import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.HystrixCommand;
 import feign.FeignException;
 import feign.RequestLine;
@@ -144,7 +143,7 @@ public class FeignRangerHttpTest {
         TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
+                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
         val result = api.test().queue().get();
         assertTrue(result.message.equalsIgnoreCase("test"));
     }
@@ -157,7 +156,7 @@ public class FeignRangerHttpTest {
         TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
+                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
         HystrixConfigutationFactory.init(
                 HystrixConfig.builder()
                         .defaultConfig(HystrixDefaultConfig.builder().build())
@@ -182,7 +181,7 @@ public class FeignRangerHttpTest {
         TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
+                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
         HystrixConfigutationFactory.init(
                 HystrixConfig.builder()
                         .defaultConfig(HystrixDefaultConfig.builder().build())

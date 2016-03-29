@@ -39,11 +39,11 @@ public class RangerFeign {
 
         private Contract contract = new Contract.Default();
 
-        public <T> T target(final Class<T> apiType, final String name, final String environment, final String namespace, final String service,
+        public <T> T target(final Class<T> apiType, final String environment, final String namespace, final String service,
                             final CuratorFramework curator, final boolean secured, final ObjectMapper objectMapper) throws Exception {
             super.invocationHandlerFactory((t, dispatch) -> new HystrixInvocationHandler((RangerTarget)t, dispatch, null));
             super.contract(new HystrixDelegatingContract(contract));
-            return target(new RangerTarget<T>(apiType, name, environment, namespace, service, curator, secured, objectMapper));
+            return target(new RangerTarget<T>(apiType, environment, namespace, service, curator, secured, objectMapper));
         }
 
         public <T> T target(Target<T> target, final T fallback) {

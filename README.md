@@ -35,7 +35,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -75,7 +75,7 @@ HystrixConfigutationFactory.init(
 TestApi api = RangerFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", "test", curator, false, objectMapper);
+                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
 api.test().queue().get();
                 
 ```
