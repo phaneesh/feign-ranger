@@ -35,10 +35,6 @@ public class RangerTarget<T> implements Target<T> {
 
     private final Class<T> type;
 
-    private final String namespace;
-
-    private final String name;
-
     @Getter
     private final String service;
 
@@ -49,10 +45,8 @@ public class RangerTarget<T> implements Target<T> {
     public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
                         final CuratorFramework curator, final boolean secured, final ObjectMapper objectMapper) throws Exception {
         this.type = type;
-        this.namespace = namespace;
         this.secured = secured;
         this.service = service;
-        this.name = Joiner.on('.').join(namespace, service);
         client = ServiceDiscoveryClient.builder()
                 .curator(curator)
                 .environment(environment)
@@ -72,7 +66,7 @@ public class RangerTarget<T> implements Target<T> {
 
     @Override
     public String name() {
-        return name;
+        return service;
     }
 
     @Override

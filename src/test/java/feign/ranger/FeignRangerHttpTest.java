@@ -31,6 +31,7 @@ import com.hystrix.configurator.core.HystrixConfigutationFactory;
 import com.netflix.hystrix.HystrixCommand;
 import feign.FeignException;
 import feign.RequestLine;
+import feign.hystrix.HystrixFeign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.ranger.common.ShardInfo;
@@ -140,10 +141,10 @@ public class FeignRangerHttpTest {
                         .command(HystrixCommandConfig.builder().name("test.test").build())
                         .build());
 
-        TestApi api = RangerFeign.builder()
+        TestApi api = HystrixFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
         val result = api.test();
         assertTrue(result.message.equalsIgnoreCase("test"));
     }
@@ -153,10 +154,10 @@ public class FeignRangerHttpTest {
         stubFor(get(urlEqualTo("/v1/test"))
                 .willReturn(aResponse()
                         .withStatus(500)));
-        TestApi api = RangerFeign.builder()
+        TestApi api = HystrixFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
         HystrixConfigutationFactory.init(
                 HystrixConfig.builder()
                         .defaultConfig(HystrixDefaultConfig.builder().build())
@@ -178,10 +179,10 @@ public class FeignRangerHttpTest {
                         .withStatus(500)
                         .withFixedDelay(2000))
                 );
-        TestApi api = RangerFeign.builder()
+        TestApi api = HystrixFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
         HystrixConfigutationFactory.init(
                 HystrixConfig.builder()
                         .defaultConfig(HystrixDefaultConfig.builder().build())

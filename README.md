@@ -7,6 +7,8 @@ This library compiles only on Java 8.
 ## Dependencies
 * ranger 0.2.1  
 * feign 8.15.1
+* feign-hystrix 8.15.1
+* feign-jackson 8.15.1
 * jackson 2.6.3
 
 ## Usage
@@ -35,7 +37,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.6</version>
 </dependency>
 ```
 
@@ -72,10 +74,10 @@ HystrixConfigutationFactory.init(
                                 )
                         .build()).build());
                         
-TestApi api = RangerFeign.builder()
+TestApi api = HystrixFeign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
-                .target(TestApi.class, "test", "test", "test", curator, false, objectMapper);
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
 api.test().queue().get();
                 
 ```
