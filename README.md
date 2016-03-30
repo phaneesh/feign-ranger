@@ -8,7 +8,6 @@ This library compiles only on Java 8.
 ## Dependencies
 * ranger 0.2.1  
 * feign 8.15.1
-* jackson 2.6.3
 
 ## Usage
 Feign Ranger extension provides a easy way to enable providing service node discovery environments. Using service discovery with feign 
