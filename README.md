@@ -1,14 +1,13 @@
 # Feign Ranger [![Travis build status](https://travis-ci.org/phaneesh/feign-ranger.svg?branch=master)](https://travis-ci.org/phaneesh/feign-ranger)
 
 This is a [feign] (https://github.com/Netflix/feign) extension that supports using [ranger](https://github.com/flipkart-incubator/ranger) discovered nodes as target.
-Also, the http calls are wrapped inside a [Hystrix](https://github.com/Netflix/Hystrix) command which allows granular control of execution environment. 
+Also, this extension supports other modules like [feign-hystrix](https://github.com/Netflix/feign/tree/master/hystrix) 
+which allows the http calls are wrapped inside a [Hystrix](https://github.com/Netflix/Hystrix) command which allows granular control of execution environment. 
 This library compiles only on Java 8.
  
 ## Dependencies
 * ranger 0.2.1  
 * feign 8.15.1
-* feign-hystrix 8.15.1
-* feign-jackson 8.15.1
 * jackson 2.6.3
 
 ## Usage
@@ -37,7 +36,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
 </dependency>
 ```
 
@@ -54,7 +53,7 @@ static class TestResponse {
 
 interface TestApi {
     @RequestLine("GET /v1/test")
-    HystrixCommand<TestResponse> test();
+    TestResponse test();
 }
 
 CuratorFramework curator = CuratorFrameworkFactory.builder()
@@ -65,20 +64,11 @@ CuratorFramework curator = CuratorFrameworkFactory.builder()
 
 ObjectMapper objectMapper = new ObjectMapper();
                 
-HystrixConfigutationFactory.init(
-                HystrixConfig.builder()
-                        .defaultConfig(HystrixDefaultConfig.builder().build())
-                        .command(HystrixCommandConfig.builder().name("test.test")
-                                .threadPool(
-                                        ThreadPoolConfig.builder().concurrency(1).timeout(1).build()
-                                )
-                        .build()).build());
-                        
-TestApi api = HystrixFeign.builder()
+TestApi api = Feign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
                 .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
-api.test().queue().get();
+TestResponse response = api.test();
                 
 ```
 

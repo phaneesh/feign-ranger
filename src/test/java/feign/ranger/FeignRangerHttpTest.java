@@ -23,21 +23,12 @@ import com.flipkart.ranger.healthcheck.HealthcheckStatus;
 import com.flipkart.ranger.serviceprovider.ServiceProvider;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.Lists;
-import com.hystrix.configurator.config.HystrixCommandConfig;
-import com.hystrix.configurator.config.HystrixConfig;
-import com.hystrix.configurator.config.HystrixDefaultConfig;
-import com.hystrix.configurator.config.ThreadPoolConfig;
-import com.hystrix.configurator.core.HystrixConfigutationFactory;
-import com.netflix.hystrix.HystrixCommand;
-import feign.FeignException;
-import feign.RequestLine;
-import feign.hystrix.HystrixFeign;
+import feign.*;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.ranger.common.ShardInfo;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryForever;
@@ -48,7 +39,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.*;
@@ -68,11 +58,14 @@ public class FeignRangerHttpTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Logger.ErrorLogger logger = new Logger.ErrorLogger();
+
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(9999);
 
     @Before
     public void startTestCluster() throws Exception {
+
         testingCluster = new TestingCluster(1);
         testingCluster.start();
         curator = CuratorFrameworkFactory.builder()
@@ -135,15 +128,11 @@ public class FeignRangerHttpTest {
                                 .build()
                         ))
                         .withHeader("Content-Type", "application/json")));
-        HystrixConfigutationFactory.init(
-                HystrixConfig.builder()
-                        .defaultConfig(HystrixDefaultConfig.builder().build())
-                        .command(HystrixCommandConfig.builder().name("test.test").build())
-                        .build());
-
-        TestApi api = HystrixFeign.builder()
+        TestApi api = Feign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
+                .logger(logger)
+                .logLevel(Logger.Level.FULL)
                 .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
         val result = api.test();
         assertTrue(result.message.equalsIgnoreCase("test"));
@@ -154,21 +143,18 @@ public class FeignRangerHttpTest {
         stubFor(get(urlEqualTo("/v1/test"))
                 .willReturn(aResponse()
                         .withStatus(500)));
-        TestApi api = HystrixFeign.builder()
+        TestApi api = Feign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
+                .logger(logger)
+                .logLevel(Logger.Level.FULL)
                 .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
-        HystrixConfigutationFactory.init(
-                HystrixConfig.builder()
-                        .defaultConfig(HystrixDefaultConfig.builder().build())
-                        .command(HystrixCommandConfig.builder().name("test.test").build())
-                        .build());
         try {
             api.test();
             fail("Should have failed!");
         } catch (Exception e) {
-            assertTrue(ExceptionUtils.getRootCause(e) instanceof FeignException);
-            assertEquals(500, ((FeignException)ExceptionUtils.getRootCause(e)).status());
+            assertTrue(e instanceof FeignException);
+            assertEquals(500, ((FeignException)e).status());
         }
     }
 
@@ -179,23 +165,18 @@ public class FeignRangerHttpTest {
                         .withStatus(500)
                         .withFixedDelay(2000))
                 );
-        TestApi api = HystrixFeign.builder()
+        TestApi api = Feign.builder()
                 .decoder(new JacksonDecoder())
                 .encoder(new JacksonEncoder())
+                .options(new Request.Options(100, 100))
+                .logger(logger)
+                .logLevel(Logger.Level.FULL)
                 .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
-        HystrixConfigutationFactory.init(
-                HystrixConfig.builder()
-                        .defaultConfig(HystrixDefaultConfig.builder().build())
-                        .command(HystrixCommandConfig.builder().name("test.test")
-                                .threadPool(
-                                        ThreadPoolConfig.builder().concurrency(1).timeout(1).build()
-                                )
-                        .build()).build());
         try {
             api.test();
             fail("Should have failed!");
         } catch (Exception e) {
-            assertTrue(ExceptionUtils.getRootCause(e) instanceof TimeoutException);
+            assertTrue(e instanceof RetryableException);
         }
     }
 

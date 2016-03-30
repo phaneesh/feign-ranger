@@ -4,7 +4,7 @@
 
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7</version>
     <packaging>jar</packaging>
 
     <name>feign-ranger</name>
@@ -52,9 +52,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hystrix.version>1.4.21</hystrix.version>
         <feign.version>8.15.1</feign.version>
-        <hystrix-configurator.version>0.0.3</hystrix-configurator.version>
         <lombok.version>1.16.6</lombok.version>
         <lombok.maven.version>1.16.6.1</lombok.maven.version>
         <ranger.version>0.2.1</ranger.version>
@@ -73,30 +71,9 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-core</artifactId>
-            <version>${hystrix.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.hystrix</groupId>
-            <artifactId>hystrix-configurator</artifactId>
-            <version>${hystrix-configurator.version}</version>
-        </dependency>
-        <dependency>
+         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-core</artifactId>
-            <version>${feign.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.feign</groupId>
-            <artifactId>feign-jackson</artifactId>
-            <version>${feign.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.feign</groupId>
-            <artifactId>feign-hystrix</artifactId>
             <version>${feign.version}</version>
         </dependency>
         <dependency>
@@ -159,6 +136,12 @@
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.feign</groupId>
+            <artifactId>feign-jackson</artifactId>
+            <version>${feign.version}</version>
             <scope>test</scope>
         </dependency>
      </dependencies>
