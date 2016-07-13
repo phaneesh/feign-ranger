@@ -38,6 +38,8 @@ public class RangerTarget<T> implements Target<T> {
     @Getter
     private final String service;
 
+    private final CuratorFramework curator;
+
     private ServiceDiscoveryClient client;
 
     private final boolean secured;
@@ -47,6 +49,7 @@ public class RangerTarget<T> implements Target<T> {
         this.type = type;
         this.secured = secured;
         this.service = service;
+        this.curator = curator;
         client = ServiceDiscoveryClient.builder()
                 .curator(curator)
                 .environment(environment)
@@ -54,9 +57,6 @@ public class RangerTarget<T> implements Target<T> {
                 .serviceName(service)
                 .objectMapper(objectMapper)
                 .build();
-        log.info("Starting service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
-        client.start();
-        log.info("Started service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
     }
 
     @Override
@@ -76,6 +76,12 @@ public class RangerTarget<T> implements Target<T> {
             throw new IllegalArgumentException("No service nodes found");
         }
         return String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());
+    }
+
+    private void start() throws Exception {
+        log.info("Starting service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
+        client.start();
+        log.info("Started service discovery client for {} on {}", service, curator.getZookeeperClient().getCurrentConnectionString());
     }
 
     public Request apply(RequestTemplate input) {
