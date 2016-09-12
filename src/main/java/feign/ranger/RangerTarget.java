@@ -57,6 +57,7 @@ public class RangerTarget<T> implements Target<T> {
                 .serviceName(service)
                 .objectMapper(objectMapper)
                 .build();
+        start();
     }
 
     @Override
@@ -86,7 +87,7 @@ public class RangerTarget<T> implements Target<T> {
 
     public Request apply(RequestTemplate input) {
         val node = client.getNode();
-        if(!node.isPresent()) {
+        if(node == null || !node.isPresent()) {
             throw new IllegalArgumentException("No service nodes found");
         }
         val url = String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());

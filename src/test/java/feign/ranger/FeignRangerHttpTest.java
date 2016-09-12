@@ -153,6 +153,7 @@ public class FeignRangerHttpTest {
             api.test();
             fail("Should have failed!");
         } catch (Exception e) {
+            e.printStackTrace();
             assertTrue(e instanceof FeignException);
             assertEquals(500, ((FeignException)e).status());
         }
