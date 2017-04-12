@@ -4,7 +4,7 @@
 
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <name>feign-ranger</name>
@@ -52,7 +52,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <feign.version>8.18.0</feign.version>
+        <feign.version>9.4.0</feign.version>
         <lombok.version>1.16.12</lombok.version>
         <lombok.maven.version>1.16.10.0</lombok.maven.version>
         <ranger.version>0.3.0</ranger.version>
@@ -72,7 +72,7 @@
             <scope>provided</scope>
         </dependency>
          <dependency>
-            <groupId>com.netflix.feign</groupId>
+            <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
             <version>${feign.version}</version>
         </dependency>
@@ -139,7 +139,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.netflix.feign</groupId>
+            <groupId>io.github.openfeign</groupId>
             <artifactId>feign-jackson</artifactId>
             <version>${feign.version}</version>
             <scope>test</scope>
