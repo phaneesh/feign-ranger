@@ -7,7 +7,7 @@ This library compiles only on Java 8.
  
 ## Dependencies
 * ranger 0.3.0  
-* feign 8.18.0
+* feign 9.4.0
 
 ## Usage
 Feign Ranger extension provides a easy way to enable providing service node discovery environments. Using service discovery with feign 
@@ -35,7 +35,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
