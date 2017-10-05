@@ -35,7 +35,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
