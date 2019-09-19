@@ -17,7 +17,7 @@
 package feign.ranger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Target;
@@ -44,12 +44,16 @@ public class RangerTarget<T> implements Target<T> {
 
     private final boolean secured;
 
+    private final String fallbackAddress;
+
     public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
-                        final CuratorFramework curator, final boolean secured, final ObjectMapper objectMapper) throws Exception {
+                        final CuratorFramework curator, final boolean secured, final String fallbackAddress,
+                        final ObjectMapper objectMapper) throws Exception {
         this.type = type;
         this.secured = secured;
         this.service = service;
         this.curator = curator;
+        this.fallbackAddress = fallbackAddress;
         client = ServiceDiscoveryClient.builder()
                 .curator(curator)
                 .environment(environment)
@@ -73,10 +77,13 @@ public class RangerTarget<T> implements Target<T> {
     @Override
     public String url() {
         val node = client.getNode();
-        if(!node.isPresent()) {
+        if(node.isPresent()) {
+            return String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());
+        }
+        if(Strings.isNullOrEmpty(fallbackAddress)) {
             throw new IllegalArgumentException("No service nodes found");
         }
-        return String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());
+        return String.format("%s://%s", secured ? "https" : "http", fallbackAddress);
     }
 
     private void start() throws Exception {

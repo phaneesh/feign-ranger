@@ -133,7 +133,7 @@ public class FeignRangerHttpTest {
                 .encoder(new JacksonEncoder())
                 .logger(logger)
                 .logLevel(Logger.Level.FULL)
-                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, null, objectMapper));
         val result = api.test();
         assertTrue(result.message.equalsIgnoreCase("test"));
     }
@@ -148,7 +148,7 @@ public class FeignRangerHttpTest {
                 .encoder(new JacksonEncoder())
                 .logger(logger)
                 .logLevel(Logger.Level.FULL)
-                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, null, objectMapper));
         try {
             api.test();
             fail("Should have failed!");
@@ -172,7 +172,7 @@ public class FeignRangerHttpTest {
                 .options(new Request.Options(100, 100))
                 .logger(logger)
                 .logLevel(Logger.Level.FULL)
-                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, objectMapper));
+                .target(new RangerTarget<>(TestApi.class, "test", "test", "test", curator, false, null, objectMapper));
         try {
             api.test();
             fail("Should have failed!");
