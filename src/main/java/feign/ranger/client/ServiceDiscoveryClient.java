@@ -46,6 +46,8 @@ public class ServiceDiscoveryClient {
                 .withCuratorFramework(curator)
                 .withNamespace(namespace)
                 .withServiceName(serviceName)
+                .withDisableWatchers(true)
+                .withNodeRefreshIntervalMs(5000)
                 .withDeserializer(data -> {
                     try {
                         return objectMapper.readValue(data,

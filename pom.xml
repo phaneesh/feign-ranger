@@ -4,7 +4,7 @@
 
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <packaging>jar</packaging>
 
     <name>feign-ranger</name>
@@ -52,7 +52,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <feign.version>10.4.0</feign.version>
+        <feign.version>10.7.0</feign.version>
         <lombok.version>1.18.10</lombok.version>
         <lombok.maven.version>1.18.10.0</lombok.maven.version>
         <ranger.version>0.6.2</ranger.version>
