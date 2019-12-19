@@ -47,6 +47,12 @@ public class RangerTarget<T> implements Target<T> {
     private final String fallbackAddress;
 
     public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
+                        final CuratorFramework curator, final boolean secured,
+                        final ObjectMapper objectMapper) throws Exception {
+        this(type, environment, namespace, service, curator, secured, null, objectMapper);
+    }
+
+    public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
                         final CuratorFramework curator, final boolean secured, final String fallbackAddress,
                         final ObjectMapper objectMapper) throws Exception {
         this.type = type;
