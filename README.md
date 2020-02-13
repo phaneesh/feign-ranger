@@ -6,8 +6,8 @@ which allows the http calls are wrapped inside a [Hystrix](https://github.com/Ne
 This library compiles only on Java 8.
  
 ## Dependencies
-* ranger 0.3.0  
-* feign 9.5.1
+* ranger 0.6.3  
+* feign 10.7.4
 
 ## Usage
 Feign Ranger extension provides a easy way to enable providing service node discovery environments. Using service discovery with feign 
@@ -35,7 +35,7 @@ Use the following maven dependency:
 <dependency>
     <groupId>feign.ranger</groupId>
     <artifactId>feign-ranger</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.7</version>
 </dependency>
 ```
 
