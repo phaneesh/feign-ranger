@@ -57,7 +57,7 @@
         <lombok.maven.version>1.18.10.0</lombok.maven.version>
         <ranger.version>0.6.3</ranger.version>
         <curator.version>3.1.0</curator.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.11.0</jackson.version>
         <junit.version>4.12</junit.version>
         <wiremock.version>1.58</wiremock.version>
         <maven.compiler.source>1.8</maven.compiler.source>
