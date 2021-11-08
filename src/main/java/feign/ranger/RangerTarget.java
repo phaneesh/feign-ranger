@@ -17,12 +17,16 @@
 package feign.ranger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.ranger.model.ServiceNode;
 import com.google.common.base.Strings;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Target;
 import feign.ranger.client.ServiceDiscoveryClient;
+import feign.ranger.common.ShardInfo;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.curator.framework.CuratorFramework;
@@ -33,6 +37,7 @@ import org.apache.curator.framework.CuratorFramework;
 @Slf4j
 public class RangerTarget<T> implements Target<T> {
 
+    @NonNull
     private final Class<T> type;
 
     @Getter
@@ -42,24 +47,49 @@ public class RangerTarget<T> implements Target<T> {
 
     private ServiceDiscoveryClient client;
 
-    private final boolean secured;
+    private final String httpScheme;
 
-    private final String fallbackAddress;
+    private final String fallbackUrl;
+
+    private final String rootPathPrefix;
 
     public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
                         final CuratorFramework curator, final boolean secured,
                         final ObjectMapper objectMapper) throws Exception {
-        this(type, environment, namespace, service, curator, secured, null, objectMapper);
+        this(type, environment, namespace, service, curator, secured, null, objectMapper, null);
     }
 
     public RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
                         final CuratorFramework curator, final boolean secured, final String fallbackAddress,
                         final ObjectMapper objectMapper) throws Exception {
+        this(type, environment, namespace, service, curator, secured, fallbackAddress, objectMapper, null);
+    }
+
+    @Builder
+    private RangerTarget(final Class<T> type, final String environment, final String namespace, final String service,
+                        final CuratorFramework curator, final boolean secured, final String fallbackAddress,
+                        final ObjectMapper objectMapper, String rootPathPrefix) throws Exception {
         this.type = type;
-        this.secured = secured;
+        if (secured) {
+            this.httpScheme = "https";
+        } else {
+            this.httpScheme = "http";
+        }
+
+        if (Strings.isNullOrEmpty(rootPathPrefix)) {
+            this.rootPathPrefix = "";
+        } else {
+            this.rootPathPrefix = "/" + rootPathPrefix;
+        }
+
+        if (Strings.isNullOrEmpty(fallbackAddress)) {
+            this.fallbackUrl = "";
+        } else {
+            this.fallbackUrl = String.format("%s://%s%s", this.httpScheme, fallbackAddress, this.rootPathPrefix);
+        }
+
         this.service = service;
         this.curator = curator;
-        this.fallbackAddress = fallbackAddress;
         client = ServiceDiscoveryClient.builder()
                 .curator(curator)
                 .environment(environment)
@@ -80,16 +110,20 @@ public class RangerTarget<T> implements Target<T> {
         return service;
     }
 
+    private String rangerUrl(ServiceNode<ShardInfo> node) {
+        return String.format("%s://%s:%d%s", httpScheme, node.getHost(), node.getPort(), rootPathPrefix);
+    }
+
     @Override
     public String url() {
         val node = client.getNode();
         if(node.isPresent()) {
-            return String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());
+            return rangerUrl(node.get());
         }
-        if(Strings.isNullOrEmpty(fallbackAddress)) {
+        if(Strings.isNullOrEmpty(fallbackUrl)) {
             throw new IllegalArgumentException("No service nodes found");
         }
-        return String.format("%s://%s", secured ? "https" : "http", fallbackAddress);
+        return fallbackUrl;
     }
 
     private void start() throws Exception {
@@ -103,7 +137,7 @@ public class RangerTarget<T> implements Target<T> {
         if(node == null || !node.isPresent()) {
             throw new IllegalArgumentException("No service nodes found");
         }
-        val url = String.format("%s://%s:%d", secured ? "https" : "http", node.get().getHost(), node.get().getPort());
+        val url = rangerUrl(node.get());
         input.insert(0, url);
         return input.request();
     }
