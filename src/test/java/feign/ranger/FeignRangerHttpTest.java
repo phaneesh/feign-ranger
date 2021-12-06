@@ -139,6 +139,27 @@ public class FeignRangerHttpTest {
     }
 
     @Test
+    public void testSuccessfulHttpRootPathPrefixCall() throws Exception {
+        stubFor(get(urlEqualTo("/apis/ks/v1/test"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody(objectMapper.writeValueAsBytes(
+                                TestResponse.builder()
+                                        .message("test")
+                                        .build()
+                        ))
+                        .withHeader("Content-Type", "application/json")));
+        TestApi api = Feign.builder()
+                .decoder(new JacksonDecoder())
+                .encoder(new JacksonEncoder())
+                .logger(logger)
+                .logLevel(Logger.Level.FULL)
+                .target(RangerTarget.<TestApi>builder().type(TestApi.class).environment("test").namespace("test").service("test").curator(curator).objectMapper(objectMapper).rootPathPrefix("apis/ks").build());
+        val result = api.test();
+        assertTrue(result.message.equalsIgnoreCase("test"));
+    }
+
+    @Test
     public void testFailureHttpCall() throws Exception {
         stubFor(get(urlEqualTo("/v1/test"))
                 .willReturn(aResponse()
