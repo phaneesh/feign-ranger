@@ -60,7 +60,7 @@
         <jackson.version>2.13.3</jackson.version>
         <junit.version>4.13.2</junit.version>
         <wiremock.version>2.27.2</wiremock.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <commons.codec.version>1.15</commons.codec.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
